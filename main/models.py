@@ -1,8 +1,10 @@
+import uuid
 from django.db import models
 
 # Create your models here.
 #models.Model adalah kelas dasar yang digunakan untuk mendefinisikan model dalam Django. MoodEntry adalah nama model yang didefinisikan.
 class MoodEntry(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     mood = models.CharField(max_length=255)
     time = models.DateField(auto_now_add=True)
     feelings = models.TextField()
