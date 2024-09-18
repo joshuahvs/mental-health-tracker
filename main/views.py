@@ -13,10 +13,10 @@ from django.contrib.auth.decorators import login_required
 # Create your views here.
 @login_required(login_url='/login')
 def show_main(request):
-    mood_entries = MoodEntry.objects.all()
+    mood_entries = MoodEntry.objects.filter(user=request.user)
     context = {
+        'name': request.user.username,
         'npm' : '2306165540',
-        'name': 'Joshua Hans Vito Soehendra',
         'class': 'PBP A',
         'mood_entries': mood_entries,
         'last_login': request.COOKIES['last_login'],
@@ -27,9 +27,11 @@ def show_main(request):
 def create_mood_entry(request):
     form = MoodEntryForm(request.POST or None)
     if form.is_valid() and request.method == "POST":
-        form.save()
+        mood_entry = form.save(commit=False)
+        mood_entry.user = request.user
+        mood_entry.save()
         return redirect('main:show_main')
-    
+
     context = {'form': form}
     return render(request, "create_mood_entry.html", context)
 
